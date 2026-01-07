@@ -1,41 +1,102 @@
-# Prerequisites
-*.d
+##############################
+# Build artifacts
+##############################
 
-# Compiled Object files
-*.slo
-*.lo
+/build/
+/build-*/
+/out/
+/cmake-build-*/
+/CMakeFiles/
+/CMakeCache.txt
+/CTestTestfile.cmake
+/Testing/
+/install/
+
+##############################
+# Compilers & toolchains
+##############################
+
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
+*.elf
+*.hex
+*.bin
+*.map
+*.d
 *.a
 *.lib
-
-# Executables
+*.so
+*.dll
 *.exe
-*.out
-*.app
 
-# debug information files
-*.dwo
+##############################
+# STM32 / Embedded
+##############################
+
+*.lst
+*.axf
+*.svd
+*.ioc
+
+# Debug / flash tools
+*.log
+*.jlink
+*.stlink
+*.openocd
+
+##############################
+# IDEs
+##############################
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# CLion / JetBrains
+.idea/
+cmake-build-*/
+
+# Eclipse
+.project
+.cproject
+.settings/
+
+##############################
+# OS-specific
+##############################
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+##############################
+# Coverage & analysis
+##############################
+
+*.gcda
+*.gcno
+*.gcov
+coverage/
+lcov.info
+
+##############################
+# Python / scripts
+##############################
+
+__pycache__/
+*.pyc
+
+##############################
+# Temporary / backups
+##############################
+
+*.bak
+*.tmp
+*.swp
