@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace stm32_drivers {
+namespace driver {
 
 struct chrono_traits {
     using rep    = std::chrono::steady_clock::rep;
