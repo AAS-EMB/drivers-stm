@@ -3,8 +3,9 @@
 #include <chrono>
 #include <cstdint>
 #include "platform.hpp"
+#include "clock_concept.hpp"
 
-namespace stm32_drivers {
+namespace driver {
 
 class steady_clock {
 public:
@@ -20,5 +21,8 @@ public:
         return time_point(duration(traits::now()));
     }
 };
+
+static_assert(Clock<steady_clock>,
+              "steady_clock must satisfy Clock concept");
 
 }

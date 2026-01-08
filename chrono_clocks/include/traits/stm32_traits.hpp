@@ -3,7 +3,7 @@
 #include <cstdint>
 #include "stm32f7xx.h"
 
-namespace stm32_drivers {
+namespace driver {
 
 struct chrono_traits {
     using rep    = int64_t;

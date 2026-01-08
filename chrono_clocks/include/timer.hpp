@@ -2,24 +2,24 @@
 
 #include "steady_clock.hpp"
 
-namespace stm32_drivers {
+namespace driver {
 
-template<typename Clock = steady_clock>
+template<Clock Cl = steady_clock>
 class basic_timer {
 public:
-    using duration   = typename Clock::duration;
-    using time_point = typename Clock::time_point;
+    using duration   = typename Cl::duration;
+    using time_point = typename Cl::time_point;
 
     void start() noexcept {
-        m_start = Clock::now();
+        m_start = Cl::now();
     }
 
     bool expired(duration timeout) const noexcept {
-        return (Clock::now() - m_start) >= timeout;
+        return (Cl::now() - m_start) >= timeout;
     }
 
     duration elapsed() const noexcept {
-        return Clock::now() - m_start;
+        return Cl::now() - m_start;
     }
 
 private:

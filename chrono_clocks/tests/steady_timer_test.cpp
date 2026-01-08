@@ -38,7 +38,7 @@ private:
     uint32_t high_ = 0;
 };
 
-using Timer = stm32_drivers::basic_timer<fake_steady_clock>;
+using Timer = driver::basic_timer<fake_steady_clock>;
 
 TEST(FakeClock, StartsAtZero) {
     fake_steady_clock::reset();
