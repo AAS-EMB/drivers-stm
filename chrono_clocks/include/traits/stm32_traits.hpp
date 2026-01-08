@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "core_cm7.h"
+#include "stm32f7xx.h"
 
 namespace stm32_drivers {
 
@@ -19,7 +19,7 @@ struct chrono_traits {
     }
 
     static rep now() noexcept {
-        // __disable_irq();
+        __disable_irq();
 
         const uint32_t now  = DWT->CYCCNT;
         const uint32_t prev = s_last;
@@ -32,7 +32,7 @@ struct chrono_traits {
 
         const uint64_t cycles = (static_cast<uint64_t>(s_high) << 32) | now;
 
-        // __enable_irq();
+        __enable_irq();
 
         return cycles_to_ns(cycles);
     }
