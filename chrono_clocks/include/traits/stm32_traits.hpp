@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "core_cm7.h"
+#include "stm32f7xx.h"
 
 namespace stm32_drivers {
 
