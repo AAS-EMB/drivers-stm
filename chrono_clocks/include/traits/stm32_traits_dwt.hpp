@@ -1,7 +1,11 @@
 #pragma once
 
 #include <cstdint>
-#include "stm32f7xx.h"
+#if defined(CHRONO_PLATFORM_STM32F7)
+    #include "stm32f7xx.h"
+#else
+    #error Unsupported platform
+#endif
 
 namespace driver {
 
