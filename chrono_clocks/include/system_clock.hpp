@@ -7,22 +7,22 @@
 
 namespace driver {
 
-class steady_clock {
+class system_clock {
 public:
     using traits     = chrono_traits;
     using rep        = typename traits::rep;
-    using period     = std::nano;
+    using period     = std::milli;
     using duration   = std::chrono::duration<rep, period>;
-    using time_point = std::chrono::time_point<steady_clock>;
+    using time_point = std::chrono::time_point<system_clock>;
 
-    static constexpr bool is_steady = true;
+    static constexpr bool is_steady = false;
 
     static time_point now() noexcept {
-        return time_point{duration{traits::monotonic_ticks()}};
+        return time_point{duration{traits::wall_ticks()}};
     }
 };
 
-static_assert(Clock<steady_clock>,
-              "steady_clock must satisfy Clock concept");
+static_assert(Clock<system_clock>,
+              "system_clock must satisfy Clock concept");
 
 }
