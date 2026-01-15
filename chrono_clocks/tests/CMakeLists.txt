@@ -1,6 +1,7 @@
 
 add_executable(chrono_clocks_tests
     steady_timer_test.cpp
+    system_timer_test.cpp
 )
 
 target_link_libraries(chrono_clocks_tests
