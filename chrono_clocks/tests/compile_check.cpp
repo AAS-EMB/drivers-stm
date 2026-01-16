@@ -1,6 +1,7 @@
 #include "steady_clock.hpp"
+#include "system_clock.hpp"
 
 void compile_check() {
-    auto t = driver::steady_clock::now();
-    (void)t;
+    [[maybe_unused]] auto t1 = driver::steady_clock::now();
+    [[maybe_unused]] auto t2 = driver::system_clock::now();
 }

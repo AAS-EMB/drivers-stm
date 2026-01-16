@@ -7,6 +7,35 @@ on:
     branches: [ master ]
 
 jobs:
+  host-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            g++ \
+            clang
+
+      - name: Configure (host)
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DPLATFORM=host \
+            -DBUILD_TESTS=ON
+
+      - name: Build
+        run: |
+          cmake --build build
+
   host-build-test:
     runs-on: ubuntu-latest
 

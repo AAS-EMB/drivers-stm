@@ -112,6 +112,11 @@ elseif (PLATFORM STREQUAL "stm32f7")
 endif()
 
 if (BUILD_TESTS AND PLATFORM STREQUAL "host")
+    if (BUILD_TESTS)
+        target_compile_definitions(chrono_clocks INTERFACE
+            BUILD_TESTS
+        )
+    endif()
     add_subdirectory(tests)
 endif()
 

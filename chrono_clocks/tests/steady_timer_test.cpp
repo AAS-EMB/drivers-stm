@@ -1,139 +1,93 @@
 #include <gtest/gtest.h>
-#include "timer.hpp"
+#include "steady_clock.hpp"
 
 using namespace std::chrono_literals;
+using namespace driver;
 
-class fake_steady_clock {
+template<Clock Cl>
+class stopwatch {
 public:
-    using duration   = std::chrono::nanoseconds;
-    using time_point = std::chrono::time_point<fake_steady_clock>;
+    using duration = typename Cl::duration;
 
-    static constexpr bool is_steady = true;
+    void start() noexcept {
+        m_start = Cl::now();
+    }
 
-    static time_point now() noexcept
-    { return time_point(duration(s_now_ns)); }
+    bool expired(duration timeout) const noexcept {
+        return (Cl::now() - m_start) >= timeout;
+    }
 
-    static void advance(duration d) noexcept
-    { s_now_ns += d.count(); }
-
-    static void reset() noexcept
-    { s_now_ns = 0; }
-
-private:
-    static inline uint64_t s_now_ns = 0;
-};
-
-class overflow_extender {
-public:
-    uint64_t feed(uint32_t value) {
-        if (value < last_) {
-            ++high_;
-        }
-        last_ = value;
-        return (static_cast<uint64_t>(high_) << 32) | value;
+    duration elapsed() const noexcept {
+        return Cl::now() - m_start;
     }
 
 private:
-    uint32_t last_ = 0;
-    uint32_t high_ = 0;
+    typename Cl::time_point m_start{};
 };
 
-using Timer = driver::basic_timer<fake_steady_clock>;
-
-TEST(FakeClock, StartsAtZero) {
-    fake_steady_clock::reset();
-    EXPECT_EQ(fake_steady_clock::now().time_since_epoch().count(), 0);
+TEST(SteadyClock, StartsAtZero) {
+    steady_clock::traits::reset();
+    EXPECT_EQ(steady_clock::now().time_since_epoch().count(), 0);
 }
 
-TEST(FakeClock, AdvancesCorrectly) {
-    fake_steady_clock::reset();
+TEST(SteadyClock, AdvancesCorrectly) {
+    steady_clock::traits::reset();
 
-    fake_steady_clock::advance(10ns);
-    EXPECT_EQ(fake_steady_clock::now().time_since_epoch().count(), 10);
+    steady_clock::traits::advance(steady_clock::duration{10ns}.count());
+    EXPECT_EQ(steady_clock::now().time_since_epoch().count(), 10);
 
-    fake_steady_clock::advance(5ns);
-    EXPECT_EQ(fake_steady_clock::now().time_since_epoch().count(), 15);
+    steady_clock::traits::advance(steady_clock::duration{5ns}.count());
+    EXPECT_EQ(steady_clock::now().time_since_epoch().count(), 15);
 }
 
-TEST(FakeClock, IsMonotonic) {
-    fake_steady_clock::reset();
+TEST(SteadyClock, IsMonotonic) {
+    steady_clock::traits::reset();
 
-    auto t1 = fake_steady_clock::now();
-    fake_steady_clock::advance(1ns);
-    auto t2 = fake_steady_clock::now();
+    auto t1 = steady_clock::now();
+    steady_clock::traits::advance(steady_clock::duration{1ns}.count());
+    auto t2 = steady_clock::now();
 
     EXPECT_GT(t2, t1);
 }
 
-TEST(BasicTimer, NotExpiredInitially) {
-    fake_steady_clock::reset();
+TEST(Stopwatch, NotExpiredInitially) {
+    steady_clock::traits::reset();
 
-    Timer timer;
+    stopwatch<steady_clock> timer;
     timer.start();
 
     EXPECT_FALSE(timer.expired(10ns));
 }
 
-TEST(BasicTimer, ExpiresAfterTimeout) {
-    fake_steady_clock::reset();
+TEST(Stopwatch, ExpiresAfterTimeout) {
+    steady_clock::traits::reset();
 
-    Timer timer;
+    stopwatch<steady_clock> timer;
     timer.start();
 
-    fake_steady_clock::advance(10ns);
+    steady_clock::traits::advance(steady_clock::duration{10ns}.count());
 
     EXPECT_TRUE(timer.expired(10ns));
 }
 
-TEST(BasicTimer, ElapsedTimeCorrect) {
-    fake_steady_clock::reset();
+TEST(Stopwatch, ElapsedTimeCorrect) {
+    steady_clock::traits::reset();
 
-    Timer timer;
+    stopwatch<steady_clock> timer;
     timer.start();
 
-    fake_steady_clock::advance(42ns);
+    steady_clock::traits::advance(steady_clock::duration{42ns}.count());
 
     EXPECT_EQ(timer.elapsed(), 42ns);
 }
 
-TEST(BasicTimer, LargeJumpStillWorks) {
-    fake_steady_clock::reset();
+TEST(Stopwatch, LargeJumpStillWorks) {
+    steady_clock::traits::reset();
 
-    Timer timer;
+    stopwatch<steady_clock> timer;
     timer.start();
 
-    fake_steady_clock::advance(1s);
+    steady_clock::traits::advance(steady_clock::duration{1s}.count());
 
     EXPECT_TRUE(timer.expired(500ms));
-}
-
-TEST(OverflowExtender, NoOverflow) {
-    overflow_extender ext;
-
-    EXPECT_EQ(ext.feed(1), 1);
-    EXPECT_EQ(ext.feed(100), 100);
-    EXPECT_EQ(ext.feed(1000), 1000);
-}
-
-TEST(OverflowExtender, DetectsWrapAround) {
-    overflow_extender ext;
-
-    ext.feed(0xFFFF'FFFE);
-    ext.feed(0xFFFF'FFFF);
-
-    auto v = ext.feed(5);
-
-    EXPECT_EQ(v, (1ULL << 32) | 5);
-}
-
-TEST(OverflowExtender, MultipleWraps) {
-    overflow_extender ext;
-
-    ext.feed(0xFFFF'FFFF);
-    ext.feed(1);
-
-    ext.feed(0xFFFF'FFFF);
-    auto v = ext.feed(2);
-
-    EXPECT_EQ(v, (2ULL << 32) | 2);
 }
