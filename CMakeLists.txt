@@ -4,12 +4,19 @@ project(drivers_stm LANGUAGES C CXX)
 option(BUILD_TESTS "Build unit tests" ON)
 option(PLATFORM "Target platform" "host")
 
+# Drivers options
+option(CHRONO_CLOCKS_LIB "Chrono clocks library" OFF)
+option(GPIO_LIB "Gpio library" OFF)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(BUILD_TESTS)
-    add_compile_definitions(BUILD_TESTS)
-else()
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(CHRONO_CLOCKS_LIB ON)
+    set(GPIO_LIB ON)
+endif()
+
+if (BUILD_TESTS)
     add_compile_definitions(BUILD_TESTS)
 endif()
 
@@ -134,5 +141,9 @@ if (BUILD_TESTS)
     add_subdirectory(external/googletest)
 endif()
 
-add_subdirectory(chrono_clocks)
-add_subdirectory(gpio)
+if (CHRONO_CLOCKS_LIB)
+    add_subdirectory(chrono_clocks)
+endif()
+if (GPIO_LIB)
+    add_subdirectory(gpio)
+endif()
