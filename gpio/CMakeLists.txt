@@ -1,10 +1,10 @@
-add_library(chrono_clocks INTERFACE)
+add_library(gpio_driver INTERFACE)
 
-target_include_directories(chrono_clocks INTERFACE
+target_include_directories(gpio_driver INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_compile_features(chrono_clocks INTERFACE
+target_compile_features(gpio_driver INTERFACE
     cxx_std_20
 )
 
@@ -27,12 +27,3 @@ if (BUILD_TESTS AND PLATFORM STREQUAL "host")
     add_subdirectory(tests)
 endif()
 
-if (NOT PLATFORM STREQUAL "host")
-    add_library(stm32_compile_check OBJECT
-        ${CMAKE_CURRENT_LIST_DIR}/tests/compile_check.cpp
-    )
-
-    target_link_libraries(stm32_compile_check PRIVATE
-        chrono_clocks
-    )
-endif()

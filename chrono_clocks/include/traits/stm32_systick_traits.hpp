@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstdint>
-#if defined(CHRONO_PLATFORM_STM32F1)
+#if defined(PLATFORM_STM32F1)
     #include "stm32f1xx.h"
-#elif defined(CHRONO_PLATFORM_STM32F3)
+#elif defined(PLATFORM_STM32F3)
     #include "stm32f3xx.h"
 #else
     #error Unsupported platform
