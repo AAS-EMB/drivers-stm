@@ -15,3 +15,4 @@ if (BUILD_TESTS)
 endif()
 
 add_subdirectory(chrono_clocks)
+add_subdirectory(gpio)
