@@ -1,9 +1,9 @@
 #pragma once
 
 #include "gpio_base.hpp"
-#if defined(GPIO_PLATFORM_STM32F1)
+#if defined(PLATFORM_STM32F1)
     #include "stm32f1xx.h"
-#elif defined(GPIO_PLATFORM_STM32F3)
+#elif defined(PLATFORM_STM32F3)
     #include "stm32f3xx.h"
 #else
     #error Unsupported platform

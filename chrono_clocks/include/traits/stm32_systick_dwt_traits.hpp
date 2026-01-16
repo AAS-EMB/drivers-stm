@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#if defined(CHRONO_PLATFORM_STM32F7)
+#if defined(PLATFORM_STM32F7)
     #include "stm32f7xx.h"
 #else
     #error Unsupported platform
