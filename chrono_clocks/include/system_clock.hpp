@@ -18,7 +18,7 @@ public:
     static constexpr bool is_steady = false;
 
     static time_point now() noexcept {
-        return time_point{duration{traits::wall_ticks()}};
+        return time_point{duration{traits::wall_ticks()}}; // utc time
     }
 };
 

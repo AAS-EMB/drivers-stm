@@ -8,6 +8,8 @@ namespace driver {
 template<typename C>
 concept Clock =
     requires {
+        typename C::rep;
+        typename C::period;
         typename C::duration;
         typename C::time_point;
     }
