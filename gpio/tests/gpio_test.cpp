@@ -1,35 +1,23 @@
 #include <gtest/gtest.h>
 #include "gpio_base.hpp"
 
-class fake_gpio : driver::gpio_base<fake_gpio> {
+class fake_gpio final : public driver::IGpio {
 public:
-    void set() noexcept {
+    ~fake_gpio() noexcept override = default;
+
+    void set() noexcept override {
         state = true;
     }
 
-    void reset() noexcept {
+    void reset() noexcept override {
         state = false;
     }
 
-    [[nodiscard]] bool is_set() const noexcept {
-        return state;
+    void toggle() noexcept override {
+        is_set() ? reset() : set();
     }
 
-private:
-    bool state = false;
-};
-
-class fake_gpio_copy : driver::gpio_base<fake_gpio_copy> {
-public:
-    void set() noexcept {
-        state = true;
-    }
-
-    void reset() noexcept {
-        state = false;
-    }
-
-    [[nodiscard]] bool is_set() const noexcept {
+    bool is_set() const noexcept override {
         return state;
     }
 
@@ -51,34 +39,16 @@ TEST(Gpio, SetReset) {
     EXPECT_FALSE(fg.is_set());
 }
 
-TEST(Gpio, CallInLambdaMultiDriver) {
-    fake_gpio fg1;
-    fake_gpio_copy fg2;
+TEST(Gpio, Toggle) {
+    fake_gpio fg;
 
-    auto set = [](auto & driver) noexcept {
-        driver.set();
-    };
+    EXPECT_FALSE(fg.is_set());
 
-    auto reset = [](auto & driver) noexcept {
-        driver.reset();
-    };
+    fg.toggle();
 
-    auto is_set = [](auto & driver) noexcept -> bool {
-        return driver.is_set();
-    };
+    EXPECT_TRUE(fg.is_set());
 
-    EXPECT_FALSE(is_set(fg1));
-    EXPECT_FALSE(is_set(fg2));
+    fg.toggle();
 
-    set(fg1);
-    set(fg2);
-
-    EXPECT_TRUE(is_set(fg1));
-    EXPECT_TRUE(is_set(fg2));
-
-    reset(fg1);
-    reset(fg2);
-
-    EXPECT_FALSE(is_set(fg1));
-    EXPECT_FALSE(is_set(fg2));
+    EXPECT_FALSE(fg.is_set());
 }

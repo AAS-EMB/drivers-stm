@@ -27,12 +27,12 @@ if (BUILD_TESTS AND PLATFORM STREQUAL "host")
     add_subdirectory(tests)
 endif()
 
-if (NOT PLATFORM STREQUAL "host")
-    add_library(stm32_compile_check OBJECT
+if (NOT PLATFORM STREQUAL "host" AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    add_library(chrono_compile_check OBJECT
         ${CMAKE_CURRENT_LIST_DIR}/tests/compile_check.cpp
     )
 
-    target_link_libraries(stm32_compile_check PRIVATE
+    target_link_libraries(chrono_compile_check PRIVATE
         chrono_clocks
     )
 endif()

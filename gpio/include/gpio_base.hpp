@@ -4,20 +4,13 @@
 
 namespace driver {
 
-template<typename Derived>
-class gpio_base {
+class IGpio {
 public:
-    void set() noexcept {
-        static_cast<Derived&>(*this).set();
-    }
-
-    void reset() noexcept {
-        static_cast<Derived&>(*this).reset();
-    }
-
-    [[nodiscard]] bool is_set() const noexcept {
-        return static_cast<Derived const&>(*this).is_set();
-    }
+    virtual ~IGpio() noexcept = default;
+    virtual void set() noexcept = 0;
+    virtual void reset() noexcept = 0;
+    virtual bool is_set() const noexcept = 0;
+    virtual void toggle() noexcept = 0;
 };
 
 }
