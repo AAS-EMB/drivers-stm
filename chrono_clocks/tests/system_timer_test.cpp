@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "system_clock.hpp"
+#include <system_clock.hpp>
 
 using namespace std::chrono_literals;
 using namespace driver;
