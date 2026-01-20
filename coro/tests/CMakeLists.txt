@@ -1,17 +1,17 @@
 
-add_executable(async_lib_tests
+add_executable(coro_lib_tests
     async_flag_test.cpp
 )
 
-target_link_libraries(async_lib_tests
+target_link_libraries(coro_lib_tests
     PRIVATE
-        async_lib
+        coro_lib
         gtest
         gmock
         gtest_main
 )
 
 add_test(
-    NAME async_lib_tests
-    COMMAND async_lib_tests
+    NAME coro_lib_tests
+    COMMAND coro_lib_tests
 )
