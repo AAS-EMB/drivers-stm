@@ -25,14 +25,6 @@ struct async_flag {
             h.resume();
         }
     }
-    void set() noexcept {
-        flag = true;
-        if (waiter) {
-            auto h = waiter;
-            waiter = {};
-            h.resume();
-        }
-    }
 
 private:
     bool flag{false};
