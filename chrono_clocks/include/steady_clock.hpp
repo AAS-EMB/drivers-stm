@@ -2,8 +2,8 @@
 
 #include <chrono>
 #include <cstdint>
-#include "platform.hpp"
-#include "clock_concept.hpp"
+#include <platform.hpp>
+#include <clock_concept.hpp>
 
 namespace driver {
 

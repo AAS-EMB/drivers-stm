@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "gpio_base.hpp"
+#include <gpio_base.hpp>
 
 class fake_gpio final : public driver::IGpio {
 public:
