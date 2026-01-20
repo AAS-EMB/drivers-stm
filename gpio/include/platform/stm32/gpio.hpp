@@ -1,6 +1,7 @@
 #pragma once
 
-#include "gpio_base.hpp"
+#include <gpio_base.hpp>
+#include <cstdint>
 #if defined(PLATFORM_STM32F1)
     #include "stm32f1xx.h"
 #elif defined(PLATFORM_STM32F3)
