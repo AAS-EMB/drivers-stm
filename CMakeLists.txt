@@ -141,6 +141,7 @@ if (BUILD_TESTS)
     add_subdirectory(external/googletest)
 endif()
 
+add_subdirectory(coro)
 if (CHRONO_CLOCKS_LIB)
     add_subdirectory(chrono_clocks)
 endif()
