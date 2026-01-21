@@ -7,6 +7,7 @@ option(PLATFORM "Target platform" "host")
 # Drivers options
 option(CHRONO_CLOCKS_LIB "Chrono clocks library" OFF)
 option(GPIO_LIB "Gpio library" OFF)
+option(CORO_LIB "Coroutinue library" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,17 +15,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(CHRONO_CLOCKS_LIB ON)
     set(GPIO_LIB ON)
-endif()
-
-if (BUILD_TESTS)
-    add_compile_definitions(BUILD_TESTS)
+    set(CORO_LIB ON)
 endif()
 
 add_library(platform_config INTERFACE)
 
 # Platform-specific definitions
 if (PLATFORM STREQUAL "host")
-    target_compile_definitions(platform_config INTERFACE PLATFORM_HOST)
+    target_compile_definitions(platform_config INTERFACE PLATFORM_HOST BUILD_TESTS)
 elseif (PLATFORM STREQUAL "stm32f1")
     target_compile_definitions(platform_config INTERFACE STM32F1 PLATFORM_STM32F1)
 
@@ -143,10 +141,12 @@ if (BUILD_TESTS)
     add_subdirectory(external/googletest)
 endif()
 
-add_subdirectory(coro)
 if (CHRONO_CLOCKS_LIB)
     add_subdirectory(chrono_clocks)
 endif()
 if (GPIO_LIB)
     add_subdirectory(gpio)
+endif()
+if (CORO_LIB)
+    add_subdirectory(coro)
 endif()
