@@ -11,15 +11,18 @@ target_compile_features(gpio_driver INTERFACE
 # Platform-specific definitions
 if (PLATFORM STREQUAL "stm32f1")
     target_link_libraries(gpio_driver INTERFACE
-        cmsis_stm32f1
+        platform_config
+        stm32f1_cmsis
     )
 elseif (PLATFORM STREQUAL "stm32f3")
     target_link_libraries(gpio_driver INTERFACE
-        cmsis_stm32f3
+        platform_config
+        stm32f3_cmsis
     )
 elseif (PLATFORM STREQUAL "stm32f7")
     target_link_libraries(gpio_driver INTERFACE
-        cmsis_stm32f7
+        platform_config
+        stm32f7_cmsis
     )
 endif()
 
