@@ -56,6 +56,7 @@ elseif (PLATFORM STREQUAL "stm32f1")
 
         target_compile_definitions(stm32f1_cmsis INTERFACE
             STM32F100xB
+            USE_HAL_DRIVER
         )
     endif()
 elseif (PLATFORM STREQUAL "stm32f3")
@@ -93,6 +94,7 @@ elseif (PLATFORM STREQUAL "stm32f3")
 
         target_compile_definitions(stm32f3_cmsis INTERFACE
             STM32F303xC
+            USE_HAL_DRIVER
         )
     endif()
 elseif (PLATFORM STREQUAL "stm32f7")
@@ -130,6 +132,7 @@ elseif (PLATFORM STREQUAL "stm32f7")
 
         target_compile_definitions(stm32f7_cmsis INTERFACE
             STM32F767xx
+            USE_HAL_DRIVER
         )
     endif()
 endif()
