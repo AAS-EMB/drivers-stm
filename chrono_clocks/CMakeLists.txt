@@ -9,17 +9,24 @@ target_compile_features(chrono_clocks INTERFACE
 )
 
 # Platform-specific definitions
-if (PLATFORM STREQUAL "stm32f1")
+if (PLATFORM STREQUAL "host")
     target_link_libraries(chrono_clocks INTERFACE
-        cmsis_stm32f1
+        platform_config
+    )
+elseif (PLATFORM STREQUAL "stm32f1")
+    target_link_libraries(chrono_clocks INTERFACE
+        platform_config
+        stm32f1_cmsis
     )
 elseif (PLATFORM STREQUAL "stm32f3")
     target_link_libraries(chrono_clocks INTERFACE
-        cmsis_stm32f3
+        platform_config
+        stm32f3_cmsis
     )
 elseif (PLATFORM STREQUAL "stm32f7")
     target_link_libraries(chrono_clocks INTERFACE
-        cmsis_stm32f7
+        platform_config
+        stm32f7_cmsis
     )
 endif()
 
