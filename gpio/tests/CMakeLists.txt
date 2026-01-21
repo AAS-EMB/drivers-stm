@@ -1,7 +1,6 @@
 
 add_executable(gpio_driver_tests
     gpio_test.cpp
-   # compile_check.cpp
 )
 
 target_link_libraries(gpio_driver_tests
