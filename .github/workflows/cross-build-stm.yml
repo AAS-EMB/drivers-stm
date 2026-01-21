@@ -2,9 +2,9 @@ name: STM32 Cross Build
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   stm32f7-build:
