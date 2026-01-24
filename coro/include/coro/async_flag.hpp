@@ -2,7 +2,7 @@
 #include <coroutine>
 #include <cstdbool>
 
-namespace driver {
+namespace driver::async {
 
 struct async_flag {
     bool await_ready() const noexcept {

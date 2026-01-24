@@ -1,17 +1,8 @@
 #include <gtest/gtest.h>
 #include <coro/async_flag.hpp>
+#include <coro/coro_task.hpp>
 
-using namespace driver;
-
-struct test_task {
-    struct promise_type {
-        test_task get_return_object() noexcept { return {}; }
-        std::suspend_never initial_suspend() noexcept { return {}; }
-        std::suspend_never final_suspend() noexcept { return {}; }
-        void return_void() noexcept {}
-        void unhandled_exception() { std::terminate(); }
-    };
-};
+using namespace driver::async;
 
 TEST(AsyncFlag, InitiallyNotReady) {
     async_flag flag;
@@ -31,7 +22,7 @@ TEST(AsyncFlag, CoroutineWaitsUntilSet) {
     async_flag flag;
     bool resumed = false;
 
-    auto coro = [&]() -> test_task {
+    auto coro = [&]() -> coro_task {
         co_await flag;
         resumed = true;
     };
@@ -52,7 +43,7 @@ TEST(AsyncFlag, ImmediateResumeIfAlreadySet) {
 
     bool resumed = false;
 
-    auto coro = [&]() -> test_task {
+    auto coro = [&]() -> coro_task {
         co_await flag;
         resumed = true;
     };
@@ -72,7 +63,7 @@ TEST(AsyncFlag, ClearResetsFlag) {
 
     bool resumed = false;
 
-    auto coro = [&]() -> test_task {
+    auto coro = [&]() -> coro_task {
         co_await flag;
         resumed = true;
     };
@@ -86,7 +77,7 @@ TEST(AsyncFlag, MultipleSetIsSafe) {
     async_flag flag;
     bool resumed = false;
 
-    auto coro = [&]() -> test_task {
+    auto coro = [&]() -> coro_task {
         co_await flag;
         resumed = true;
     };
@@ -104,7 +95,7 @@ TEST(AsyncFlag, AwaitResumeReturnsTrue) {
     async_flag flag;
     bool result = false;
 
-    auto coro = [&]() -> test_task {
+    auto coro = [&]() -> coro_task {
         result = co_await flag;
     };
 
@@ -118,12 +109,12 @@ TEST(AsyncFlag, OnlyOneWaiterSupported) {
     async_flag flag;
     int counter = 0;
 
-    auto coro1 = [&]() -> test_task {
+    auto coro1 = [&]() -> coro_task {
         co_await flag;
         ++counter;
     };
 
-    auto coro2 = [&]() -> test_task {
+    auto coro2 = [&]() -> coro_task {
         co_await flag;
         ++counter;
     };
