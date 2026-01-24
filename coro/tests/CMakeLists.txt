@@ -1,6 +1,7 @@
 
 add_executable(coro_lib_tests
     async_flag_test.cpp
+    coro_timer_test.cpp
 )
 
 target_link_libraries(coro_lib_tests
@@ -9,6 +10,7 @@ target_link_libraries(coro_lib_tests
         gtest
         gmock
         gtest_main
+        chrono_clocks
 )
 
 add_test(

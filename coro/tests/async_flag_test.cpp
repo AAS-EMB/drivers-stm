@@ -27,7 +27,7 @@ TEST(AsyncFlag, CoroutineWaitsUntilSet) {
         resumed = true;
     };
 
-    coro();
+    auto t = coro();
 
     EXPECT_FALSE(resumed);
 
@@ -48,7 +48,7 @@ TEST(AsyncFlag, ImmediateResumeIfAlreadySet) {
         resumed = true;
     };
 
-    coro();
+    auto t = coro();
 
     EXPECT_TRUE(resumed);
 }
@@ -68,7 +68,7 @@ TEST(AsyncFlag, ClearResetsFlag) {
         resumed = true;
     };
 
-    coro();
+    auto t = coro();
 
     EXPECT_FALSE(resumed);
 }
@@ -82,7 +82,7 @@ TEST(AsyncFlag, MultipleSetIsSafe) {
         resumed = true;
     };
 
-    coro();
+    auto t = coro();
 
     flag = true;
     flag = true;
@@ -99,7 +99,7 @@ TEST(AsyncFlag, AwaitResumeReturnsTrue) {
         result = co_await flag;
     };
 
-    coro();
+    auto t = coro();
     flag = true;
 
     EXPECT_TRUE(result);
@@ -119,8 +119,8 @@ TEST(AsyncFlag, OnlyOneWaiterSupported) {
         ++counter;
     };
 
-    coro1();
-    coro2();
+    auto t1 = coro1();
+    auto t2 = coro2();
 
     flag = true;
 
