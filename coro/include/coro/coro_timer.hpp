@@ -8,6 +8,17 @@ struct coro_timer {
     std::chrono::nanoseconds dur;
     driver::steady_clock::time_point deadline{};
     std::coroutine_handle<> handle{};
+    bool armed{false};
+
+    static coro_timer sleep_for(std::chrono::nanoseconds d) noexcept {
+        return coro_timer{d};
+    }
+
+    static coro_timer sleep_until(driver::steady_clock::time_point tp) noexcept {
+        coro_timer t{};
+        t.deadline = tp;
+        return t;
+    }
 
     bool await_ready() const noexcept {
         return dur.count() <= 0;
@@ -15,15 +26,21 @@ struct coro_timer {
 
     bool await_suspend(std::coroutine_handle<> h) noexcept {
         handle = h;
-        deadline = driver::steady_clock::now() + dur;
+        armed = true;
+
+        if (deadline == driver::steady_clock::time_point{}) {
+            deadline = driver::steady_clock::now() + dur;
+        }
         return true;
     }
 
     void process() noexcept {
-        if (handle && driver::steady_clock::now() >= deadline) {
+        if (armed && handle && driver::steady_clock::now() >= deadline) {
             auto h = handle;
             handle = {};
-            h.resume();
+            armed = false;
+            if (!h.done())
+                h.resume();
         }
     }
 

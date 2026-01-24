@@ -17,8 +17,9 @@ struct async_flag {
         }
 
         void await_suspend(std::coroutine_handle<> h) noexcept {
-            assert(!f.waiter && "Only one waiter supported");
-            f.waiter = h;
+            assert(!f.handle && "Only one waiter supported");
+            f.handle = h;
+            f.armed  = true;
         }
 
         void await_resume() const noexcept {}
@@ -39,16 +40,17 @@ struct async_flag {
 
 private:
     bool flag{false};
-    std::coroutine_handle<> waiter{};
+    bool armed{false};
+    std::coroutine_handle<> handle{};
 
     void set() noexcept {
         if (flag) return;
 
         flag = true;
 
-        if (waiter) {
-            auto h = waiter;
-            waiter = {};
+        if (armed && handle) {
+            auto h = handle;
+            handle = {};
             if (!h.done()) {
                 h.resume();
             }
@@ -57,7 +59,7 @@ private:
 
     void reset() noexcept {
         flag = false;
-        waiter = {};
+        handle = {};
     }
 };
 
