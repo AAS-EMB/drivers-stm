@@ -81,3 +81,44 @@ TEST(CoroTimer, MultipleTimersWork) {
     timer2.process();
     EXPECT_TRUE(b);
 }
+
+TEST(CoroTimer, ReuseTimerSlot) {
+    coro_timer timer{ 50ns };
+
+    steady_clock::traits::reset();
+    int count = 0;
+
+    auto coro = [&]() -> coro_task {
+        co_await timer;
+        count++;
+        co_await timer;
+        count++;
+    };
+
+    auto t = coro();
+
+    steady_clock::traits::advance(50);
+    timer.process();
+    EXPECT_EQ(count, 1);
+
+    steady_clock::traits::advance(50);
+    timer.process();
+    EXPECT_EQ(count, 2);
+}
+
+TEST(CoroTimer, NoPollNoFire) {
+    coro_timer timer{ 100ns };
+
+    steady_clock::traits::reset();
+    bool fired = false;
+
+    auto coro = [&]() -> coro_task {
+        co_await timer;
+        fired = true;
+    };
+
+    auto t = coro();
+
+    steady_clock::traits::advance(200);
+    EXPECT_FALSE(fired);
+}

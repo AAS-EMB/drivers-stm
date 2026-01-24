@@ -42,6 +42,8 @@ struct coro_task {
 
     std::coroutine_handle<promise_type> h;
 
+    coro_task(const coro_task&) = delete;
+    coro_task& operator=(const coro_task&) = delete;
     explicit coro_task(std::coroutine_handle<promise_type> h) : h(h) {}
     coro_task(coro_task&& other) noexcept : h(other.h) { other.h = {}; }
     ~coro_task() {

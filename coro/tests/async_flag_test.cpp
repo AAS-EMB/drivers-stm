@@ -4,20 +4,6 @@
 
 using namespace driver::async;
 
-TEST(AsyncFlag, InitiallyNotReady) {
-    async_flag flag;
-
-    EXPECT_FALSE(flag.await_ready());
-}
-
-TEST(AsyncFlag, SetMakesReady) {
-    async_flag flag;
-
-    flag = true;
-
-    EXPECT_TRUE(flag.await_ready());
-}
-
 TEST(AsyncFlag, CoroutineWaitsUntilSet) {
     async_flag flag;
     bool resumed = false;
@@ -59,7 +45,7 @@ TEST(AsyncFlag, ClearResetsFlag) {
     flag = true;
     flag = false;
 
-    EXPECT_FALSE(flag.await_ready());
+    EXPECT_FALSE(flag.is_set());
 
     bool resumed = false;
 
@@ -91,21 +77,25 @@ TEST(AsyncFlag, MultipleSetIsSafe) {
     EXPECT_TRUE(resumed);
 }
 
-TEST(AsyncFlag, AwaitResumeReturnsTrue) {
+TEST(AsyncFlag, DoubleSetDoesNotResumeTwice) {
     async_flag flag;
-    bool result = false;
+    int counter = 0;
 
     auto coro = [&]() -> coro_task {
-        result = co_await flag;
+        co_await flag;
+        ++counter;
     };
 
     auto t = coro();
-    flag = true;
 
-    EXPECT_TRUE(result);
+    flag = true;
+    EXPECT_EQ(counter, 1);
+
+    flag = true;
+    EXPECT_EQ(counter, 1);
 }
 
-TEST(AsyncFlag, OnlyOneWaiterSupported) {
+TEST(AsyncFlag, ResetAllowsReuse) {
     async_flag flag;
     int counter = 0;
 
@@ -114,15 +104,72 @@ TEST(AsyncFlag, OnlyOneWaiterSupported) {
         ++counter;
     };
 
+    auto t1 = coro1();
+
+    flag = true;
+    EXPECT_EQ(counter, 1);
+
+    flag = false;
+
     auto coro2 = [&]() -> coro_task {
         co_await flag;
         ++counter;
     };
 
-    auto t1 = coro1();
     auto t2 = coro2();
 
-    flag = true;
-
     EXPECT_EQ(counter, 1);
+
+    flag = true;
+    EXPECT_EQ(counter, 2);
+}
+
+TEST(AsyncFlag, OnlyOneWaiterAllowed) {
+    async_flag flag;
+    bool a = false;
+    bool b = false;
+
+    auto coro = [&]() -> coro_task {
+        co_await flag;
+        a = true;
+    };
+
+    auto t = coro();
+
+#ifndef NDEBUG
+    EXPECT_DEATH({
+        auto coro = [&]() -> coro_task {
+            co_await flag;
+            b = true;
+        };
+        auto t = coro();
+    }, "Only one waiter");
+#endif
+}
+
+TEST(AsyncFlag, NoResumeAfterCompletion) {
+    async_flag flag;
+    int counter = 0;
+
+    auto coro = [&]() -> coro_task {
+        co_await flag;
+        ++counter;
+    };
+
+    auto t = coro();
+
+    flag = true;
+    EXPECT_EQ(counter, 1);
+
+    flag = true;
+    EXPECT_EQ(counter, 1);
+}
+
+TEST(AsyncFlag, CoroutineOutlivesFlag) {
+    coro_task task = []() -> coro_task {
+        async_flag flag;
+        co_await flag;
+    }();
+
+    SUCCEED();
 }
