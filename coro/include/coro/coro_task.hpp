@@ -32,7 +32,7 @@ struct coro_task {
 
         static void operator delete(void* ptr, std::size_t size) noexcept {
             #if defined(PLATFORM_HOST)
-                std::pmr::get_default_resource()->deallocate(ptr, size);
+                coro_task::get_resource()->deallocate(ptr, size, alignof(promise_type));
             #else
                 (void)ptr; (void)size;
                 std::terminate();
@@ -41,6 +41,18 @@ struct coro_task {
     };
 
     std::coroutine_handle<promise_type> h;
+
+    coro_task(const coro_task&) = delete;
+    coro_task& operator=(const coro_task&) = delete;
+    explicit coro_task(std::coroutine_handle<promise_type> h) : h(h) {}
+    coro_task(coro_task&& other) noexcept : h(other.h) { other.h = {}; }
+    ~coro_task() {
+        #if defined(PLATFORM_HOST)
+            if (h) h.destroy();
+        #else
+            (void)h;
+        #endif
+    }
 };
 
 }
